@@ -278,6 +278,10 @@ function mouseDragged() {
 }
 
 function mouseReleased() {
+  if (interactionState !== 'none' && selectedShape) {
+    // refresh property inputs to match final transform values
+    updatePropertiesPanel();
+  }
   interactionState = 'none';
 }
 
@@ -327,10 +331,25 @@ function updatePropertiesPanel() {
     `;
   }
 
-  // Position / size readout
+  // Transform — position + size (editable)
+  const showH = ['ellipse', 'rect', 'arc', 'quad', 'image', 'line'].includes(selectedShape.type);
   dynamicProperties.innerHTML += `
-    <div class="prop-row"><span class="prop-label">x</span><span class="prop-val">${Math.round(selectedShape.x)}</span></div>
-    <div class="prop-row"><span class="prop-label">y</span><span class="prop-val">${Math.round(selectedShape.y)}</span></div>
+    <div class="prop-row">
+      <span class="prop-label">x</span>
+      <input type="number" id="propX" value="${Math.round(selectedShape.x)}">
+    </div>
+    <div class="prop-row">
+      <span class="prop-label">y</span>
+      <input type="number" id="propY" value="${Math.round(selectedShape.y)}">
+    </div>
+    <div class="prop-row">
+      <span class="prop-label">w</span>
+      <input type="number" id="propW" value="${Math.round(selectedShape.w)}" min="1">
+    </div>
+    ${showH ? `<div class="prop-row">
+      <span class="prop-label">h</span>
+      <input type="number" id="propH" value="${Math.round(selectedShape.h)}" min="1">
+    </div>` : ''}
   `;
 
   setTimeout(() => {
@@ -340,6 +359,20 @@ function updatePropertiesPanel() {
         selectedShape.color = e.target.value;
       });
     }
+
+    // Number inputs: position + size
+    const bindNum = (id, apply) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('input', (e) => {
+        const v = parseFloat(e.target.value);
+        if (!isNaN(v)) apply(v);
+      });
+    };
+    bindNum('propX', (v) => { selectedShape.x = v; });
+    bindNum('propY', (v) => { selectedShape.y = v; });
+    bindNum('propW', (v) => { selectedShape.w = Math.max(1, v); });
+    bindNum('propH', (v) => { selectedShape.h = Math.max(1, v); });
 
     if (selectedShape.type === 'arc') {
       const startInp = document.getElementById('propArcStart');

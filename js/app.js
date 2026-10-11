@@ -14,6 +14,7 @@ let initialRotation = 0;
 let initialDist = 0;
 let initialScale = 1;
 let hoveredHandle = null;
+let activeQuadPoint = -1;
 
 const toolBtns = document.querySelectorAll('.tool-btn');
 const layersList = document.getElementById('layersList');
@@ -59,6 +60,13 @@ class CanvasShape {
     this.arcStart = 0;
     this.arcEnd = 270;
     this.arcMode = 'PIE';
+    // Quad: 4 corner points relative to center (local space, pre-scale)
+    this.points = [
+      { x: -60, y: -60 }, // top-left
+      { x: 60, y: -60 },  // top-right
+      { x: 60, y: 60 },   // bottom-right
+      { x: -60, y: 60 },  // bottom-left
+    ];
   }
 
   draw() {
@@ -97,9 +105,12 @@ class CanvasShape {
         strokeWeight(8 / this.scale);
         point(0, 0);
         break;
-      case 'quad':
-        quad(-this.w / 2, -this.h / 2, this.w / 2, -this.h / 2.5, this.w / 2.5, this.h / 2, -this.w / 2, this.h / 2);
+      case 'quad': {
+        // Use the actual 4 corner points (free-form quad)
+        const [p1, p2, p3, p4] = this.points;
+        quad(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, p4.x, p4.y);
         break;
+      }
       case 'rect':
         rect(0, 0, this.w, this.h);
         break;
@@ -128,6 +139,21 @@ class CanvasShape {
     const localY = (dx * sinA + dy * cosA) / this.scale;
 
     if (this.type === 'point') return dist(0, 0, localX, localY) < 15;
+
+    // Quad: point-in-polygon test (handles concave + convex quads)
+    if (this.type === 'quad') {
+      const pts = this.points;
+      let inside = false;
+      for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+        const xi = pts[i].x, yi = pts[i].y;
+        const xj = pts[j].x, yj = pts[j].y;
+        const intersect = ((yi > localY) !== (yj > localY)) &&
+          (localX < (xj - xi) * (localY - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+      }
+      return inside;
+    }
+
     return (localX >= -this.w / 2 && localX <= this.w / 2 && localY >= -this.h / 2 && localY <= this.h / 2);
   }
 }
@@ -161,6 +187,33 @@ function drawSelection(shape) {
   translate(shape.x, shape.y);
   rotate(shape.rotation);
 
+  // Quad: draw polygon through the actual points + 4 corner handles
+  if (shape.type === 'quad') {
+    noFill();
+    stroke('#33ff66');
+    strokeWeight(1);
+    beginShape();
+    for (const p of shape.points) vertex(p.x * shape.scale, p.y * shape.scale);
+    endShape(CLOSE);
+
+    fill('#33ff66');
+    noStroke();
+    const hs = 8;
+    for (const p of shape.points) {
+      rect(p.x * shape.scale - hs / 2, p.y * shape.scale - hs / 2, hs, hs);
+    }
+
+    // rotate handle above centroid
+    const cy = shape.points.reduce((s, p) => s + p.y, 0) / 4 * shape.scale;
+    stroke('#33ff66');
+    strokeWeight(1);
+    line(0, cy, 0, cy - 20);
+    fill('#33ff66');
+    circle(0, cy - 25, 10);
+    pop();
+    return;
+  }
+
   const hw = (shape.w / 2) * shape.scale + 6;
   const hh = (shape.h / 2) * shape.scale + 6;
 
@@ -191,6 +244,29 @@ function updateHoverState(shape) {
   hoveredHandle = null;
 
   const m = getLocalMouse(shape);
+
+  // Quad: corner point handles (local space, un-rotated by getLocalMouse)
+  if (shape.type === 'quad') {
+    const cy = shape.points.reduce((s, p) => s + p.y, 0) / 4 * shape.scale;
+    if (dist(m.x, m.y, 0, cy - 25) < 12) {
+      hoveredHandle = 'rot';
+      cursor(HAND);
+      return;
+    }
+    for (let i = 0; i < 4; i++) {
+      const p = shape.points[i];
+      const hx = p.x * shape.scale;
+      const hy = p.y * shape.scale;
+      if (dist(m.x, m.y, hx, hy) < 12) {
+        hoveredHandle = 'q' + i;
+        cursor('move');
+        return;
+      }
+    }
+    cursor(ARROW);
+    return;
+  }
+
   const hw = (shape.w / 2) * shape.scale + 6;
   const hh = (shape.h / 2) * shape.scale + 6;
   const hs = 12;
@@ -224,6 +300,10 @@ function mousePressed() {
         interactionState = 'rotate';
         initialAngle = atan2(mouseY - selectedShape.y, mouseX - selectedShape.x);
         initialRotation = selectedShape.rotation;
+      } else if (hoveredHandle.startsWith('q')) {
+        // quad corner point drag
+        interactionState = 'quadpoint';
+        activeQuadPoint = parseInt(hoveredHandle.slice(1), 10);
       } else {
         interactionState = 'scale';
         initialDist = dist(mouseX, mouseY, selectedShape.x, selectedShape.y);
@@ -274,6 +354,21 @@ function mouseDragged() {
       const ratio = cur / initialDist;
       selectedShape.scale = constrain(initialScale * ratio, 0.1, 10);
     }
+  } else if (interactionState === 'quadpoint') {
+    // move corner point in local space (undo rotation + scale)
+    const m = getLocalMouse(selectedShape);
+    const p = selectedShape.points[activeQuadPoint];
+    p.x = m.x / selectedShape.scale;
+    p.y = m.y / selectedShape.scale;
+    // keep w/h in sync with bbox of points (for uniform scale handles)
+    const xs = selectedShape.points.map((pt) => pt.x);
+    const ys = selectedShape.points.map((pt) => pt.y);
+    const minX = Math.min(...xs);
+    const maxX = Math.max(...xs);
+    const minY = Math.min(...ys);
+    const maxY = Math.max(...ys);
+    selectedShape.w = Math.max(10, maxX - minX);
+    selectedShape.h = Math.max(10, maxY - minY);
   }
 }
 
@@ -283,6 +378,7 @@ function mouseReleased() {
     updatePropertiesPanel();
   }
   interactionState = 'none';
+  activeQuadPoint = -1;
 }
 
 // ============ UI ============

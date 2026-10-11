@@ -331,26 +331,23 @@ function updatePropertiesPanel() {
     `;
   }
 
-  // Transform — position + size (editable)
+  // Transform — position + size (sliders, same style as arc controls)
   const showH = ['ellipse', 'rect', 'arc', 'quad', 'image', 'line'].includes(selectedShape.type);
-  dynamicProperties.innerHTML += `
-    <div class="prop-row">
-      <span class="prop-label">x</span>
-      <input type="number" id="propX" value="${Math.round(selectedShape.x)}">
-    </div>
-    <div class="prop-row">
-      <span class="prop-label">y</span>
-      <input type="number" id="propY" value="${Math.round(selectedShape.y)}">
-    </div>
-    <div class="prop-row">
-      <span class="prop-label">w</span>
-      <input type="number" id="propW" value="${Math.round(selectedShape.w)}" min="1">
-    </div>
-    ${showH ? `<div class="prop-row">
-      <span class="prop-label">h</span>
-      <input type="number" id="propH" value="${Math.round(selectedShape.h)}" min="1">
-    </div>` : ''}
-  `;
+  const cw = Math.round(width);
+  const ch = Math.round(height);
+  const sliderBlock = (id, label, val, min, max, unit) => `
+    <div class="prop-slider-block">
+      <div class="prop-slider-head">
+        <span class="prop-label">${label}</span>
+        <span class="prop-val" id="val${id}">${Math.round(val)}${unit || ''}</span>
+      </div>
+      <input type="range" id="${id}" min="${min}" max="${max}" value="${Math.round(val)}">
+    </div>`;
+  dynamicProperties.innerHTML +=
+    sliderBlock('propX', 'x', selectedShape.x, 0, cw) +
+    sliderBlock('propY', 'y', selectedShape.y, 0, ch) +
+    sliderBlock('propW', 'w', selectedShape.w, 5, 500) +
+    (showH ? sliderBlock('propH', 'h', selectedShape.h, 5, 500) : '');
 
   setTimeout(() => {
     const colorInp = document.getElementById('propColor');
@@ -360,19 +357,21 @@ function updatePropertiesPanel() {
       });
     }
 
-    // Number inputs: position + size
-    const bindNum = (id, apply) => {
+    // Sliders: position + size (id live-updates its readout span)
+    const bindSlider = (id, apply) => {
       const el = document.getElementById(id);
       if (!el) return;
       el.addEventListener('input', (e) => {
         const v = parseFloat(e.target.value);
-        if (!isNaN(v)) apply(v);
+        apply(v);
+        const readout = document.getElementById('val' + id);
+        if (readout) readout.textContent = Math.round(v);
       });
     };
-    bindNum('propX', (v) => { selectedShape.x = v; });
-    bindNum('propY', (v) => { selectedShape.y = v; });
-    bindNum('propW', (v) => { selectedShape.w = Math.max(1, v); });
-    bindNum('propH', (v) => { selectedShape.h = Math.max(1, v); });
+    bindSlider('propX', (v) => { selectedShape.x = v; });
+    bindSlider('propY', (v) => { selectedShape.y = v; });
+    bindSlider('propW', (v) => { selectedShape.w = Math.max(5, v); });
+    bindSlider('propH', (v) => { selectedShape.h = Math.max(5, v); });
 
     if (selectedShape.type === 'arc') {
       const startInp = document.getElementById('propArcStart');

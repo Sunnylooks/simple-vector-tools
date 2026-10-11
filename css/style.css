@@ -243,30 +243,7 @@ body {
   font-weight: 600;
 }
 
-/* Number inputs in prop rows */
-.prop-row input[type="number"] {
-  width: 76px;
-  background: var(--bg-3);
-  border: 1px solid var(--line-2);
-  color: var(--text);
-  font-family: inherit;
-  font-size: 10px;
-  padding: 3px 6px;
-  text-align: right;
-  border-radius: 0;
-}
-
-.prop-row input[type="number"]:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-
-.prop-row input[type="number"]::-webkit-inner-spin-button,
-.prop-row input[type="number"]::-webkit-outer-spin-button {
-  opacity: 0.3;
-}
-
-/* Range input */
+/* Range slider styling (prop sliders) */
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;

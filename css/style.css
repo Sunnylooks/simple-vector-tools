@@ -1,0 +1,418 @@
+/* p5 studio — pixel edition
+   brainfish minimalism + pixel2 retro theme
+   sharp corners, monospace, single accent, pixelated */
+
+:root {
+  --bg: #0d0d0d;
+  --bg-2: #141414;
+  --bg-3: #1a1a1a;
+  --panel: #161616;
+  --panel-2: #1e1e1e;
+  --line: #2e2e2e;
+  --line-2: #3d3d3d;
+  --text: #e8e8e8;
+  --text-2: #a8a8a8;
+  --text-3: #6a6a6a;
+  --accent: #33ff66;      /* phosphor green */
+  --accent-2: #1f9d3d;
+  --accent-bg: rgba(51, 255, 102, 0.08);
+  --danger: #ff4455;
+  --danger-bg: rgba(255, 68, 85, 0.1);
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --pad: 14px;
+  --gap: 12px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  font-size: 13px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============ SIDEBAR ============ */
+.sidebar {
+  width: 340px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  padding: var(--pad);
+  overflow: hidden;
+  background: var(--bg);
+  border-right: 1px solid var(--line);
+}
+
+/* ============ PANEL ============ */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 0;
+  padding: var(--pad);
+  flex-shrink: 0;
+}
+
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.panel-title {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 10px;
+  font-family: 'Silkscreen', monospace;
+}
+
+.panel-head .panel-title { margin-bottom: 0; }
+
+/* ============ BUTTONS ============ */
+.btn {
+  background: var(--panel-2);
+  border: 1px solid var(--line-2);
+  border-radius: 0;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background 0.1s, border-color 0.1s, color 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--bg-3);
+  border-color: var(--text-3);
+  color: var(--text);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.btn svg { width: 12px; height: 12px; flex-shrink: 0; }
+
+.icon-btn { padding: 5px; width: 26px; height: 26px; }
+
+.icon-btn svg { width: 9px; height: 9px; }
+
+.icon-btn.danger:hover:not(:disabled) { border-color: var(--danger); color: var(--danger); }
+
+/* ============ TOOL GRID ============ */
+.tool-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+}
+
+.tool-btn {
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 2px;
+  font-size: 8px;
+  letter-spacing: 0.5px;
+  color: var(--text-3);
+}
+
+.tool-btn svg { width: 14px; height: 14px; }
+
+.tool-btn:hover {
+  color: var(--text);
+  border-color: var(--accent-2);
+}
+
+.tool-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #000;
+}
+
+.tool-btn.active svg { fill: #000; }
+
+/* ============ MEDIA ROW ============ */
+.media-row {
+  display: flex;
+  gap: 4px;
+}
+
+.media-row .btn { flex: 1; }
+
+.hint {
+  font-size: 9px;
+  color: var(--text-3);
+  margin-top: 6px;
+  min-height: 12px;
+  line-height: 1.3;
+}
+
+.hint.error { color: var(--danger); }
+
+/* ============ URL INPUT ============ */
+.url-input-row {
+  margin-top: 6px;
+  display: flex;
+}
+
+.url-input-row[hidden] { display: none; }
+
+.url-input-row input {
+  flex: 1;
+  min-width: 0;
+  background: var(--bg-2);
+  border: 1px solid var(--line-2);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 11px;
+  padding: 7px 8px;
+  border-radius: 0;
+}
+
+.url-input-row input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.url-input-row input::placeholder { color: var(--text-3); }
+
+/* ============ PROPS ============ */
+.props { display: flex; flex-direction: column; gap: 8px; }
+
+.props-empty {
+  font-size: 10px;
+  color: var(--text-3);
+  text-align: center;
+  padding: 10px 0;
+  font-style: italic;
+}
+
+.prop-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  padding: 7px 8px;
+}
+
+.prop-label {
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.prop-slider-block {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.prop-slider-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.prop-val {
+  font-size: 10px;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Range input */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: var(--line-2);
+  cursor: pointer;
+  border-radius: 0;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 14px;
+  background: var(--accent);
+  cursor: pointer;
+  border-radius: 0;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 10px;
+  height: 14px;
+  background: var(--accent);
+  cursor: pointer;
+  border: none;
+  border-radius: 0;
+}
+
+/* Color input */
+input[type="color"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 32px;
+  height: 20px;
+  background: transparent;
+  border: 1px solid var(--line-2);
+  cursor: pointer;
+  padding: 0;
+  border-radius: 0;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper { padding: 1px; }
+input[type="color"]::-webkit-color-swatch { border: none; border-radius: 0; }
+
+/* Select */
+select {
+  background: var(--bg-3);
+  border: 1px solid var(--line-2);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 10px;
+  padding: 3px 6px;
+  cursor: pointer;
+  border-radius: 0;
+}
+
+select:focus { outline: none; border-color: var(--accent); }
+
+/* ============ LAYERS ============ */
+.layers {
+  flex: 1;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+}
+
+.layer-actions { display: flex; gap: 3px; }
+
+.layers-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 0;
+}
+
+.layers-list::-webkit-scrollbar { width: 4px; }
+.layers-list::-webkit-scrollbar-track { background: transparent; }
+.layers-list::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 0; }
+
+.layers-empty {
+  font-size: 10px;
+  color: var(--text-3);
+  text-align: center;
+  padding: 14px 0;
+  font-style: italic;
+}
+
+.layer-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--text-2);
+  border: 1px solid transparent;
+  transition: background 0.1s, border-color 0.1s;
+}
+
+.layer-item:hover { background: var(--bg-2); }
+
+.layer-item.active {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.layer-item svg { width: 10px; height: 10px; flex-shrink: 0; opacity: 0.7; }
+.layer-item.active svg { opacity: 1; }
+
+.layer-item .layer-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ============ CANVAS ============ */
+#canvas-wrapper {
+  flex: 1;
+  position: relative;
+  background-color: var(--bg-2);
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+  border: 1px solid var(--line);
+  margin: var(--pad) var(--pad) var(--pad) 0;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+#p5-container {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#p5-container canvas { display: block; image-rendering: pixelated; }
+
+/* Responsive — mobile: halaman boleh scroll, canvas kasih tinggi tetap */
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    overflow: auto;
+  }
+
+  .sidebar {
+    width: 100%;
+    overflow: visible;
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .layers { flex: none; }
+
+  .layers-list { max-height: 220px; }
+
+  #canvas-wrapper {
+    margin: 0 var(--pad) var(--pad);
+    height: 55vh;
+    min-height: 300px;
+    flex: none;
+  }
+}

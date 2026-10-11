@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>p5 studio — pixel edition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
+</head>
+<body>
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+
+    <section class="panel">
+      <h2 class="panel-title">tools</h2>
+      <div class="tool-grid">
+
+        <button class="btn tool-btn active" data-tool="select" title="Select (V)">
+          <svg viewBox="0 0 16 16" fill="currentColor"><rect x="3" y="2" width="2" height="10"/><rect x="5" y="2" width="2" height="8"/><rect x="7" y="2" width="2" height="6"/><rect x="9" y="2" width="2" height="4"/><rect x="3" y="12" width="8" height="2"/></svg>
+          <span>select</span>
+        </button>
+
+        <button class="btn tool-btn" data-tool="arc" title="Arc">
+          <svg viewBox="0 0 16 16" fill="currentColor"><rect x="7" y="2" width="2" height="2"/><rect x="5" y="4" width="4" height="2"/><rect x="3" y="6" width="2" height="2"/><rect x="10" y="6" width="2" height="2"/><rect x="2" y="8" width="2" height="2"/><rect x="7" y="8" width="2" height="4"/><rect x="4" y="12" width="8" height="2"/></svg>
+          <span>arc</span>
+        </button>
+
+        <button class="btn tool-btn" data-tool="circle" title="Circle">
+          <svg viewBox="0 0 16 16" fill="currentColor"><rect x="6" y="2" width="4" height="2"/><rect x="4" y="4" width="2" height="2"/><rect x="10" y="4" width="2" height="2"/><rect x="2" y="6" width="2" height="4"/><rect x="12" y="6" width="2" height="4"/><rect x="4" y="10" width="2" height="2"/><rect x="10" y="10" width="2" height="2"/><rect x="6" y="12" width="4" height="2"/></svg>
+          <span>circle</span>
+        </button>
+
+        <button class="btn tool-btn" data-tool="ellipse" title="Ellipse">
+          <svg viewBox="0 0 16 16" fill="currentColor"><rect x="4" y="3" width="8" height="2"/><rect x="2" y="5" width="2" height="6"/><rect x="12" y="5" width="2" height="6"/><rect x="4" y="11" width="8" height="2"/></svg>
+          <span>ellipse</span>
+        </button>
+
+        <button class="btn tool-btn" data-tool="line" title="Line">
+          <svg viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="12" width="2" height="2"/><rect x="4" y="10" width="2" height="2"/><rect x="6" y="8" width="2" height="2"/><rect x="8" y="6" width="2" height="2"/><rect x="10" y="4" width="2" height="2"/><rect x="12" y="2" width="2" height="2"/></svg>
+          <span>line</span>
+        </button>
+
+        <button class="btn tool-btn" data-tool="point" title="Point">
+          <svg viewBox="0 0 16 16" fill="currentColor"><rect x="6" y="6" width="4" height="4"/></svg>
+          <span>point</span>
+        </button>
+
+        <button class="btn tool-btn" data-tool="quad" title="Quad">
+          <svg viewBox="0 0 16 16" fill="currentColor"><rect x="6" y="2" width="4" height="2"/><rect x="10" y="4" width="2" height="2"/><rect x="12" y="6" width="2" height="4"/><rect x="10" y="10" width="2" height="2"/><rect x="6" y="12" width="4" height="2"/><rect x="4" y="10" width="2" height="2"/><rect x="2" y="6" width="2" height="4"/><rect x="4" y="4" width="2" height="2"/></svg>
+          <span>quad</span>
+        </button>
+
+        <button class="btn tool-btn" data-tool="rect" title="Rectangle">
+          <svg viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="3" width="12" height="2"/><rect x="2" y="11" width="12" height="2"/><rect x="2" y="3" width="2" height="10"/><rect x="12" y="3" width="2" height="10"/></svg>
+          <span>rect</span>
+        </button>
+
+        <button class="btn tool-btn" data-tool="square" title="Square">
+          <svg viewBox="0 0 16 16" fill="currentColor"><rect x="4" y="4" width="8" height="2"/><rect x="4" y="10" width="8" height="2"/><rect x="4" y="4" width="2" height="8"/><rect x="10" y="4" width="2" height="8"/></svg>
+          <span>square</span>
+        </button>
+
+        <button class="btn tool-btn" data-tool="triangle" title="Triangle">
+          <svg viewBox="0 0 16 16" fill="currentColor"><rect x="7" y="2" width="2" height="2"/><rect x="5" y="4" width="6" height="2"/><rect x="3" y="6" width="2" height="2"/><rect x="11" y="6" width="2" height="2"/><rect x="2" y="8" width="4" height="2"/><rect x="10" y="8" width="4" height="2"/><rect x="2" y="12" width="12" height="2"/></svg>
+          <span>triangle</span>
+        </button>
+
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="panel-title">media</h2>
+      <div class="media-row">
+        <label class="btn" for="imageUpload">
+          <svg viewBox="0 0 16 16" fill="currentColor"><rect x="7" y="2" width="2" height="2"/><rect x="5" y="4" width="6" height="2"/><rect x="2" y="10" width="12" height="2"/><rect x="4" y="12" width="8" height="2"/></svg>
+          file
+        </label>
+        <button class="btn" id="urlImageBtn">
+          <svg viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="6" width="4" height="2"/><rect x="4" y="4" width="2" height="6"/><rect x="10" y="6" width="4" height="2"/><rect x="10" y="4" width="2" height="6"/></svg>
+          url
+        </button>
+        <input type="file" id="imageUpload" accept="image/*" hidden>
+      </div>
+      <div class="url-input-row" id="urlInputRow" hidden>
+        <input type="text" id="urlInput" placeholder="paste url, enter to load" spellcheck="false" autocomplete="off">
+      </div>
+      <p class="hint" id="mediaHint"></p>
+    </section>
+
+    <section class="panel">
+      <h2 class="panel-title">properties</h2>
+      <div id="dynamicProperties" class="props"></div>
+    </section>
+
+    <section class="panel layers">
+      <div class="panel-head">
+        <h2 class="panel-title">layers</h2>
+        <div class="layer-actions">
+          <button class="btn icon-btn" id="btnLayerUp" title="Bring forward" disabled>
+            <svg viewBox="0 0 16 16" fill="currentColor"><rect x="7" y="2" width="2" height="2"/><rect x="5" y="4" width="6" height="2"/><rect x="4" y="6" width="8" height="2"/><rect x="2" y="8" width="12" height="2"/></svg>
+          </button>
+          <button class="btn icon-btn" id="btnLayerDown" title="Send backward" disabled>
+            <svg viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="6" width="12" height="2"/><rect x="4" y="8" width="8" height="2"/><rect x="5" y="10" width="6" height="2"/><rect x="7" y="12" width="2" height="2"/></svg>
+          </button>
+          <button class="btn icon-btn danger" id="btnDelete" title="Delete" disabled>
+            <svg viewBox="0 0 16 16" fill="currentColor"><rect x="3" y="3" width="10" height="2"/><rect x="6" y="2" width="4" height="1"/><rect x="4" y="5" width="8" height="2"/><rect x="5" y="7" width="2" height="5"/><rect x="9" y="7" width="2" height="5"/><rect x="3" y="12" width="10" height="2"/></svg>
+          </button>
+        </div>
+      </div>
+      <div id="layersList" class="layers-list"></div>
+    </section>
+
+  </aside>
+
+  <!-- ============ CANVAS ============ -->
+  <main id="canvas-wrapper">
+    <div id="p5-container"></div>
+  </main>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

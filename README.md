@@ -1,4 +1,4 @@
-# p5 studio — pixel edition
+# Simple Vector Tools
 
 A minimalist pixel-themed drawing app built with p5.js. Simple, clean, and retro — for making quick shape-based art directly in the browser.
 
@@ -10,7 +10,6 @@ A minimalist pixel-themed drawing app built with p5.js. Simple, clean, and retro
 - **Live properties**: color, position (x/y), arc angles and mode
 - **Transform on canvas**: drag, rotate, scale with handles
 - **Keyboard shortcuts**: `V` for select, `Delete`/`Backspace` to remove selected
-- **Non-scrollable desktop layout** (like a native app) with mobile-responsive scrolling
 - **Pixel2 aesthetic**: sharp corners, phosphor green accent (#33ff66), IBM Plex Mono + Silkscreen fonts
 
 ## Structure
@@ -27,6 +26,3 @@ No build step. Pure HTML/CSS/JS + p5.js from CDN.
 
 Open `index.html` in any modern browser, or visit the live GitHub Pages deployment.
 
-## License
-
-MIT
